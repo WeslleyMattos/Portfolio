@@ -9,17 +9,17 @@
   }
 
   :root {
-    --color-background: #fffdf7;
+    --color-background: #081b29;
     --color-black: #212121;
     --color-full-black: #000000;
     --color-text: #ededed;
     --color-text-out: #90908e;
     --color-primary: #0ef;
-    --color-secondary: #fff2cc;
+    --color-secondary: #990ff5f7;
     --color-white: #ffffff;
     --color-red: #e74c3c;
     --color-green: #2ecc71;
-    --color-separate: #cccccc;
+    --color-separate: aliceblue;
     --color-hover: #0ef;
   
     --fontPadrao: "PoppinsRegular", "Rubik", sans-serif;
@@ -36,17 +36,18 @@ html,
 body {
     font-family: var(--fontPadrao);
     color: var(--color-text);
+    background: var(--color-background);
     
 }
 
 /* cabeçalho */
 .header {
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
-    padding: 20px 10%;
-    background: transparent;
+    padding: 5px 10%;
+    background: var(--color-background);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -57,7 +58,7 @@ body {
 .logo {
     position: relative;
     font-size: 25px;
-    color: #fff;
+    color: var(--color-white);
     text-decoration: none;
     font-weight: 600;
     cursor: default;
@@ -69,7 +70,7 @@ body {
 .navbar a {
     display: inline-block;
     font-size: 25px;
-    color: #fff;
+    color: var(--color-white);
     text-decoration: none;
     font-weight: 500;
     margin-left: 35px;
@@ -80,8 +81,11 @@ body {
 }
 
 .navbar a:hover {
-    color: var(--color-hover);
-    text-decoration: underline;
+    color: var(--color-primary);
+}
+
+.navbar a.active {
+    text-decoration: underline var(--color-primary);
 }
 
 /* page inicial */
@@ -143,10 +147,10 @@ body {
     width: 40px;
     height: 40px;
     background: transparent;
-    border: 2px solid #0ef;
+    border: 2px solid var(--color-primary);
     border-radius: 50%;
     font-size: 20px;
-    color: var(--color-hover);
+    color: var(--color-primary);
     text-decoration: none;
     transition: .5 ease;
     opacity: 0;
@@ -157,9 +161,9 @@ body {
 }
 
 .home-sci a:hover {
-    background: #fff;
+    background: var(--color-white);
     color: #081b29;
-    box-shadow: 0 0 20px #0ef;
+    box-shadow: 0 0 20px var(--color-primary);
     transition: 0.3s;
 }
 
@@ -180,11 +184,155 @@ body {
 }
 
 .btn-box:hover{
-    background: #fff;
+    background: var(--color-white);
     box-shadow: 0 0 5px rgb(247, 253, 253),
-    0 0 25px cyan, 0 0 50px cyan,
-    0 0 100px cyan, 0 0 200px rgb(216, 231, 231);
+    0 0 25px cyan, 0 0 50px cyan;
 }
+
+/* page sobre mim */
+.about {
+    padding-top: 120px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.about-img img {
+    padding-bottom: 20%;
+    max-width: 630px;
+    height: auto;
+    width: 100%;
+    border-radius: 8px;
+}
+
+.about-text h2 {
+    font-size: 60px;
+}
+
+.about-text h2 span {
+    color: var(--color-primary);
+}
+
+.about-text h4 {
+    font-size: 29px;
+    font-weight: 600;
+    color: var(--color-white);
+    line-height: 1.7;
+    margin: 15px 0 30px;
+}
+
+.about-text p {
+    color: var(--color-text);
+    font-size: 20px;
+    line-height: 1.4;
+    margin-bottom: 4rem;
+}
+
+/* serviços */
+#services {
+    color: var(--color-separate);
+    font-size: 20px;
+    line-height: 1.4;
+    margin-bottom: 4rem;
+}
+
+.sub-title {
+    text-align: center;
+    font-size: 60px;
+    padding-bottom: 70px;
+}
+
+.sub-title span {
+    color: var(--color-primary);
+}
+
+.container {
+    padding: 90px;
+}
+
+.services-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-gap: 40px;
+    margin-top: 50px;
+}
+
+.services-list div {
+    background-color: transparent;
+    padding: 40px;
+    font-size: 13px;
+    font-weight: 13px;
+    border-right: 10px;
+    border-radius: 20px;
+    transition: background 0.5s, transform 0.5s;
+    box-shadow: 1px 1px 20px #012290f7,
+                1px 1px 40px #0053b8f7
+}
+
+.services-list div i {
+    font-size: 50px;
+    margin-bottom: 30px;
+
+}
+
+.services-list div h2 {
+    font-size: 30px;
+    font-weight: 500;
+    margin-bottom: 15px;
+}
+
+.services-list div a {
+    text-decoration: none;
+    color: var(--color-black);
+    font-size: 12px;
+    margin-top: 20px;
+    display: inline-block;
+}
+
+.read {
+    display: inline-block;
+    padding: 12px 20px;
+    background: var(--color-primary);
+    border-radius: 40px;
+    font-size: 16px;
+    color: var(--color-background);
+    letter-spacing: 1px;
+    text-decoration: none;
+    font-weight: 600;
+    opacity: 0;
+    animation: slideTop 1s ease forwards;
+    animation-delay: 2s;
+    box-shadow: 0 0 5px var(--color-primary),
+    0 0 25px var(--color-primary);
+}
+
+.read:hover {
+    background: var(--color-white);
+    color: #081b29;
+    box-shadow: 0 0 20px var(--color-primary);
+    transition: 0.2s;
+}
+
+.services-list div:hover {
+    transform: translateY(-10px);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /* animação logo e h3 home */
