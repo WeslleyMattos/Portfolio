@@ -251,6 +251,7 @@ body {
     padding: 90px;
 }
 
+/* cards */
 .services-list {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -282,14 +283,16 @@ body {
     margin-bottom: 15px;
 }
 
+/* botao saiba mais */
 .services-list div a {
     text-decoration: none;
     color: var(--color-black);
-    font-size: 12px;
-    margin-top: 20px;
+    font-size: 13px;
+    margin-top: 30px;
     display: inline-block;
 }
 
+/* botao saiba mais → conteudo de dentro */
 .read {
     display: inline-block;
     padding: 12px 20px;
@@ -319,7 +322,26 @@ body {
 }
 
 
+/* sessão skills */
 
+section {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.skills-container {
+    width: 600px;
+    height: 500px;
+    padding: 75px 95px;
+    margin-left: 120px;
+}
+
+.skills-title {
+    text-align: center;
+    text-decoration: underline;
+    text-underline-offset: 10px;
+    text-decoration-thickness: 5px;
+}
 
 
 

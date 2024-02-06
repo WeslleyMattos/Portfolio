@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sobre</title>
+    <title>Habilidades</title>
     <link rel="stylesheet" href="./css/style.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
@@ -15,37 +15,130 @@
 
         <nav class="navbar">
             <a href="index.html" style="--i:1">Início</a>
-            <a href="sobre.html" style="--i:2" class="active">Sobre mim</a>
-            <a href="skills.html" style="--i:3">Skills</a>
+            <a href="sobre.html" style="--i:2">Sobre mim</a>
+            <a href="skills.html" style="--i:3" class="active">Skills</a>
             <a href="portfolio.html" style="--i:4">Portfolio</a>
             <a href="contato.html" style="--i:5">Contato</a>
         </nav>
     </header>
 
 
+    <!-- titulo da page-->
+    <h1 style="padding-top: 100px ;" class="sub-title">Minhas <span>Habilidades</span"></h1>
+
+
     <!-- conteúdo -->
-    <section class="about" id="about">
-        <div class="about-img">
-            <img src="img/perfil.png" alt="imagem-weslley">
+   <section>
+
+       <div class="skills-container" id="skills">
+            <h1 class="skills-title">Habilidades Técnicas</h1>
+            <div class="tech-bars">
+                <div class="bar"><i style="color: #c95d2e" class='bx bxl-html5'></i>
+                    <div class="info">
+                        <span>HTML</span>
+                    </div>
+                    <div class="progress-line html">
+                        <span></span>
+                    </div>
+                </div>
+
+                <div class="bar"><i style="color: #147bbc" class='bx bxl-css3'></i>
+                    <div class="info">
+                        <span>CSS</span>
+                    </div>
+                    <div class="progress-line css">
+                        <span></span>
+                    </div>
+                </div>
+
+                <div class="bar"><i style="color: #e2f704" class='bx bxl-javascript'></i>
+                    <div class="info">
+                        <span>JavaScript</span>
+                    </div>
+                    <div class="progress-line javascript">
+                        <span></span>
+                    </div>
+                </div>
+
+                <div class="bar"><i style="color: #e00fc4" class='bx bxl-python'></i>
+                    <div class="info">
+                        <span>Python</span>
+                    </div>
+                    <div class="progress-line python">
+                        <span></span>
+                    </div>
+                </div>
+
+                <div class="bar"><i style="color: #0ef" class='bx bxl-postgresql'></i>
+                    <div class="info">
+                        <span>SQL</span>
+                    </div>
+                    <div class="progress-line sql">
+                        <span></span>
+                    </div>
+                </div>
+
+                <div class="bar"><i style="color: #0053b8f7" class='bx bxl-docker'></i>
+                    <div class="info">
+                        <span>Docker</span>
+                    </div>
+                    <div class="progress-line docker">
+                        <span></span>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="about-text">
-            <h2>Sobre <span>Mim</span></h2>
-            <h4>Full Stack Developer?!</h4>
-            <p>
-                Prazer, meu nome é Weslley Renan, atualmente estudando muito para conseguir me tornar um desenvolvedor
-                Full Stack. Sou uma pessoa muito dedicada e estou me aprofundando na area de programação.
-                <br>Conhecendo novas tecnologias e aprendendo cada vez mais, estou em transição de carreira, ja trabalhei em variadas empresas e ramos,
-                como por exemplo: Açougueiro, chapeiro de lanchonete, garçom, caixa, servente de pedreiro entre outros.
-                Desde que me conheço como gente, sempre mexia com computadores, com aquele sonho que toda criança tem de criar seu próprio game...
-                <br>Em 2013, eu e mais alguns amigos criamos um servidor de GTA San Andreas, foi meu primeiro contato com a programação, parecia muito complicado na época, mas foi muito divertido, nosso servidor cresceu muito rápido, rápido até demais, a ponto que não conseguimos dar sequência por falta de conhecimento, levando ao fechamento do servidor. <br>Anos depois meus amigos entraram no ramo da programação e hoje me incentivam a me tornar um desenvolvedor.
-                <br>Aprendi muito nesses 10 anos que se passaram, mas ainda tenho muito a aprender... Sigo na luta diária do conhecimento e aprendizado para conseguir realizar aquele sonho de criança que um dia parecia impossível mas hoje, hoje está a um passo de ser realizado.
-                Um objetivo?! Ah sim, seria um dia ter minha própria empresa de games, para que meu filho, talvez um dia venha a ter esse mesmo sonho de alcançar algo que um dia foi inalcançável.
-            </p>
-            <a href="#" class="btn-box">Mais sobre mim</a>
+
+        <div class="skills-container">
+            <h1 class="skills-title">Habilidades Profissionais"></h1>
+
+            <div class="radial-bars">
+
+                <svg x="0px" y="0px" viewBox="0 0 200 200">
+                    <circle class="progress-bar" cx="100" cy="100" r="80"></circle>
+                    <circle class="path path-1" cx="100" cy="100" r="80"></circle>
+                </svg>
+                <div class="percentage">70%</div>
+                <div class="text">Criatividade</div>
+            </div>
+
+            <div class="radial-bars">
+
+                <svg x="0px" y="0px" viewBox="0 0 200 200">
+                    <circle class="progress-bar" cx="100" cy="100" r="80"></circle>
+                    <circle class="path path-1" cx="100" cy="100" r="80"></circle>
+                </svg>
+                <div class="percentage">90%</div>
+                <div class="text">Comunicação</div>
+            </div>
+
+            <div class="radial-bars">
+
+                <svg x="0px" y="0px" viewBox="0 0 200 200">
+                    <circle class="progress-bar" cx="100" cy="100" r="80"></circle>
+                    <circle class="path path-1" cx="100" cy="100" r="80"></circle>
+                </svg>
+                <div class="percentage">75%</div>
+                <div class="text">Solução de Problemas</div>
+            </div>
+
+            <div class="radial-bars">
+
+                <svg x="0px" y="0px" viewBox="0 0 200 200">
+                    <circle class="progress-bar" cx="100" cy="100" r="80"></circle>
+                    <circle class="path path-1" cx="100" cy="100" r="80"></circle>
+                </svg>
+                <div class="percentage">85%</div>
+                <div class="text">Trabalho em Equipe</div>
+            </div>
 
         </div>
 
-    </section>
+
+
+   </section>
+
+
     <script src="js/script.js"></script>
 </body>
 </html>
