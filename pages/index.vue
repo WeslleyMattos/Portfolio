@@ -3,12 +3,16 @@
     <div class="relative w-full h-screen bg-cover bg-center flex items-center px-[10%] pt-[70px]"
         style="background-image: url('wallpaperwess.png');">
         <div class="max-w-[600px]">
-            <h3 class="text-2xl text-gray-100 font-bold opacity-0 animate-[slideRight_1s_ease_forwards] delay-[0.6s]">Hello World!
-                It's me</h3>
-            <h1 class="text-5xl text-gray-100 font-bold mt-[-3px] opacity-0 animate-[slideRight_1s_ease_forwards] delay-[1s]">Weslley
-                Renan,</h1>
-            <h3 class="text-2xl text-gray-100 font-bold mb-8 opacity-0 animate-[slideRight_1s_ease_forwards] delay-[1.4s]">
-                E sou um <span class="text-blue-500">desenvolvedor</span>
+            <h3 class="text-2xl text-gray-100 font-bold opacity-0 animate-[slideRight_1s_ease_forwards] delay-[0.6s]">
+                Hello World! It's me
+            </h3>
+            <h1
+                class="text-5xl text-gray-100 font-bold mt-[-3px] opacity-0 animate-[slideRight_1s_ease_forwards] delay-[1s]">
+                Weslley Renan,
+            </h1>
+            <h3
+                class="text-2xl text-gray-100 font-bold mb-8 opacity-0 animate-[slideRight_1s_ease_forwards] delay-[1.4s]">
+                E sou um <span class="words text-blue-500"></span>
             </h3>
             <p class="text-lg text-gray-100 opacity-0 animate-[slideLeft_1s_ease_forwards] delay-[2.5s]">
                 Ingressando na área de programação no objetivo de ser um desenvolvedor full-stack!
@@ -38,6 +42,21 @@
         </div>
     </div>
 </template>
+
+<script setup>
+import { onMounted } from "vue";
+import Typed from "typed.js";
+
+onMounted(() => {
+    new Typed(".words", {
+        strings: ["Frontend Developer", "Web Developer", "Backend Developer"],
+        typeSpeed: 100,
+        backSpeed: 100,
+        backDelay: 1000,
+        loop: true,
+    });
+});
+</script>
 
 <style>
 @import url('https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css');

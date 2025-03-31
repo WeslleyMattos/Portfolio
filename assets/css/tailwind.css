@@ -1,2 +1,74 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
+
+:root {
+  --color-background: #081b29;
+  --color-black: #212121;
+  --color-full-black: #000000;
+  --color-text: #ededed;
+  --color-text-out: #032f53;
+  --color-primary: #0ef;
+  --color-secondary: #990ff5f7;
+  --color-white: #ffffff;
+  --color-red: #e74c3c;
+  --color-green: #2ecc71;
+  --color-separate: aliceblue;
+  --color-hover: #0ef;
+}
+
+@layer utilities {
+  .bg-background {
+    background-color: var(--color-background);
+  }
+  .bg-black {
+    background-color: var(--color-black);
+  }
+  .bg-full-black {
+    background-color: var(--color-full-black);
+  }
+  .bg-white {
+    background-color: var(--color-white);
+  }
+  .bg-separate {
+    background-color: var(--color-separate);
+  }
+
+  .text-background {
+    color: var(--color-background);
+  }
+  .text-primary {
+    color: var(--color-primary);
+  }
+  .text-secondary {
+    color: var(--color-secondary);
+  }
+  .text-white {
+    color: var(--color-white);
+  }
+  .text-red {
+    color: var(--color-red);
+  }
+  .text-green {
+    color: var(--color-green);
+  }
+  .text-black {
+    color: var(--color-black);
+  }
+  .text-full-black {
+    color: var(--color-full-black);
+  }
+  .text-separate {
+    color: var(--color-separate);
+  }
+
+  .hover-background {
+    &:hover {
+      background-color: var(--color-hover);
+    }
+  }
+  .hover-text-primary {
+    &:hover {
+      color: var(--color-primary);
+    }
+  }
+}
