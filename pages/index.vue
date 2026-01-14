@@ -58,7 +58,7 @@
             <!-- CTA -->
             <div
                 class="flex flex-col sm:flex-row gap-4 mt-8 opacity-0 animate-[slideLeft_0.8s_ease_forwards] delay-[1s]">
-                <NuxtLink to="/portfolio"
+                <NuxtLink to="/projetos"
                     class="px-8 py-3 bg-orange-500 text-white rounded-full font-semibold text-center hover:bg-orange-600 transition">
                     Ver projetos
                 </NuxtLink>
@@ -79,8 +79,8 @@
 
 <script setup>
 import Typed from "typed.js";
-import ProfileImg from "~/components/Profile-img.vue";
 import { onMounted } from "vue";
+import ProfileImg from "~/components/Profile-img.vue";
 
 onMounted(() => {
     // Prevenir overflow horizontal

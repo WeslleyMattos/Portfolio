@@ -1,7 +1,7 @@
 <template>
   <header ref="headerRef" class="fixed top-0 left-0 w-full bg-gray-900 text-white py-4 shadow-md z-50">
     <div class="container mx-auto flex justify-between items-center px-4">
-      <a href="#" class="text-xl font-bold">Portfolio</a>
+      <a href="/" class="text-xl font-bold">Portfolio</a>
       
       <!-- Menu hambúrguer (mobile) -->
       <button @click="toggleMenu" class="md:hidden text-2xl focus:outline-none">
@@ -16,11 +16,8 @@
         <NuxtLink to="/sobre" class="nav-item">
           <i class="bx bx-user"></i> Sobre
         </NuxtLink>
-        <NuxtLink to="/skills" class="nav-item">
-          <i class="bx bx-code"></i> Skills
-        </NuxtLink>
-        <NuxtLink to="/portfolio" class="nav-item">
-          <i class="bx bx-briefcase"></i> Portfolio
+        <NuxtLink to="/projetos" class="nav-item">
+          <i class="bx bx-briefcase"></i> Projetos
         </NuxtLink>
       </nav>
     </div>
@@ -34,11 +31,8 @@
         <NuxtLink to="/sobre" @click="closeMenu" class="nav-item-mobile">
           <i class="bx bx-user"></i> Sobre
         </NuxtLink>
-        <NuxtLink to="/skills" @click="closeMenu" class="nav-item-mobile">
-          <i class="bx bx-code"></i> Skills
-        </NuxtLink>
-        <NuxtLink to="/portfolio" @click="closeMenu" class="nav-item-mobile">
-          <i class="bx bx-briefcase"></i> Portfolio
+        <NuxtLink to="/projetos" @click="closeMenu" class="nav-item-mobile">
+          <i class="bx bx-briefcase"></i> Projetos
         </NuxtLink>
       </div>
     </nav>
