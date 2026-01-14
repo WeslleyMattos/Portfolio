@@ -64,7 +64,7 @@ const projects = ref([
         id: 6,
         title: 'Historic Bet',
         description: 'Landing page para plataforma de apostas em cassino, com design moderno e foco na experiência do usuário.',
-        images: ['/HistoricBet1.png', '/HistoricBet2.png', '/HistoricBet3.png', '/HistoricBet4.png', '/HistoricBet5.png'],
+        images: ['/Historicbet1.png', '/Historicbet2.png', '/Historicbet3.png', '/Historicbet4.png', '/Historicbet5.png'],
         tags: ['Nuxt 3', 'Tailwind', 'Creative', 'JavaScript', 'Animations', 'Nuxt-UI', 'Charts']
     }
 ]);
