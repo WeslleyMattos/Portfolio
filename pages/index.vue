@@ -79,7 +79,7 @@
 
 <script setup>
 import Typed from "typed.js";
-import ProfileImg from "~/components/profile-img.vue";
+import ProfileImg from "~/components/Profile-img.vue";
 import { onMounted } from "vue";
 
 onMounted(() => {
@@ -91,7 +91,7 @@ onMounted(() => {
             "Frontend Developer",
             "Web Developer",
             "JavaScript Dev",
-            "Full Stack Dev"
+            "Full Stack in progress"
         ],
         typeSpeed: 80,
         backSpeed: 60,
