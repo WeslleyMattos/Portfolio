@@ -14,4 +14,12 @@ export default defineNuxtConfig({
   css: [
     '@/assets/css/tailwind.css',
   ],
+
+  app: {
+    head: {
+      link: [
+        { rel: 'icon', type: 'image/png', href: '/logo.png' }
+      ]
+    }
+  }
 });
