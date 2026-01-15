@@ -46,6 +46,8 @@ function roll() {
 </script>
 
 <style scoped lang="scss">
+@use 'sass:math';
+
 $containerWidth: 90px;
 $containerHeight: $containerWidth;
 
@@ -57,7 +59,7 @@ $animationDuration: 3s;
 
 $angle: 54deg;
 $ringAngle: -11deg;
-$sideAngle: 360deg / 5;
+$sideAngle: math.div(360deg, 5);
 $opacity: 0.95;
 $color: rgba(255, 215, 0, $opacity);
 
@@ -174,7 +176,7 @@ $translateLowerY: $faceHeight * 0.78 + $translateRingY;
     @for $i from 11 through 15 {
         &[data-face="#{$i}"] {
             $angleMultiplier: $i - 8;
-            transform: rotateX(-$ringAngle) rotateY(-$sideAngle * $angleMultiplier - $sideAngle/2);
+            transform: rotateX(-$ringAngle) rotateY(-$sideAngle * $angleMultiplier - math.div($sideAngle, 2));
         }
     }
 
@@ -218,7 +220,7 @@ $translateLowerY: $faceHeight * 0.78 + $translateRingY;
         @for $i from 16 through 20 {
             &:nth-child(#{$i}) {
                 $angleMultiplier: $i - 18;
-                transform: rotateY($sideAngle * $angleMultiplier + $sideAngle/2) translateZ($translateLowerZ) translateY($translateLowerY) rotateZ(180deg) rotateX($angle);
+                transform: rotateY($sideAngle * $angleMultiplier + math.div($sideAngle, 2)) translateZ($translateLowerZ) translateY($translateLowerY) rotateZ(180deg) rotateX($angle);
             }
         }
 
@@ -232,7 +234,7 @@ $translateLowerY: $faceHeight * 0.78 + $translateRingY;
         @for $i from 11 through 15 {
             &:nth-child(#{$i}) {
                 $angleMultiplier: $i - 8;
-                transform: rotateY($sideAngle * $angleMultiplier + $sideAngle/2) translateZ($translateRingZ) translateY($translateRingY) rotateX($ringAngle);
+                transform: rotateY($sideAngle * $angleMultiplier + math.div($sideAngle, 2)) translateZ($translateRingZ) translateY($translateRingY) rotateX($ringAngle);
             }
         }
     }
