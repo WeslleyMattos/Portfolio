@@ -55,7 +55,7 @@ $faceHeight: $faceWidth * 0.86;
 $transitionDuration: 0.5s;
 $animationDuration: 3s;
 
-$angle: 53deg;
+$angle: 54deg;
 $ringAngle: -11deg;
 $sideAngle: 360deg / 5;
 $opacity: 0.95;
@@ -197,7 +197,7 @@ $translateLowerY: $faceHeight * 0.78 + $translateRingY;
         &:before {
             content: counter(steps);
             position: absolute;
-            top: calc(#{$faceHeight * 0.25} - 3px);
+            top: calc(#{$faceHeight * 0.25} - 1px); //altura dos numeros
             left: -$faceWidth;
             color: #000;
             text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.3);

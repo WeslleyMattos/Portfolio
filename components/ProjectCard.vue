@@ -26,6 +26,8 @@
             <button 
                 v-if="project.images.length > 1"
                 @click.stop="prevImage"
+                @touchstart.stop
+                @touchend.stop
                 class="absolute left-4 top-1/2 -translate-y-1/2 w-14 h-14 bg-gray-900 bg-opacity-80 rounded-full flex items-center justify-center text-white text-3xl hover:bg-opacity-100 transition z-[100000]"
             >
                 <i class="bx bx-chevron-left"></i>
@@ -33,6 +35,8 @@
             <button 
                 v-if="project.images.length > 1"
                 @click.stop="nextImage"
+                @touchstart.stop
+                @touchend.stop
                 class="absolute right-4 top-1/2 -translate-y-1/2 w-14 h-14 bg-gray-900 bg-opacity-80 rounded-full flex items-center justify-center text-white text-3xl hover:bg-opacity-100 transition z-[100000]"
             >
                 <i class="bx bx-chevron-right"></i>
@@ -88,6 +92,8 @@
                 <button 
                     v-if="project.images.length > 1"
                     @click.stop="prevImage"
+                    @touchstart.stop
+                    @touchend.stop
                     class="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-black bg-opacity-50 rounded-full flex items-center justify-center text-white hover:bg-opacity-75 transition z-10"
                 >
                     <i class="bx bx-chevron-left text-xl"></i>
@@ -95,6 +101,8 @@
                 <button 
                     v-if="project.images.length > 1"
                     @click.stop="nextImage"
+                    @touchstart.stop
+                    @touchend.stop
                     class="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-black bg-opacity-50 rounded-full flex items-center justify-center text-white hover:bg-opacity-75 transition z-10"
                 >
                     <i class="bx bx-chevron-right text-xl"></i>
@@ -147,6 +155,7 @@ const isExpanded = ref(false);
 const currentImageIndex = ref(0);
 const touchStartX = ref(0);
 const touchEndX = ref(0);
+const isSwiping = ref(false);
 
 const nextImage = () => {
     currentImageIndex.value = (currentImageIndex.value + 1) % props.project.images.length;
@@ -188,26 +197,42 @@ const handleKeyPress = (event) => {
 };
 
 const handleTouchStart = (event) => {
+    // Ignorar se o toque começou em um botão ou elemento interativo
+    const target = event.target;
+    if (target.closest('button') || target.tagName === 'BUTTON') {
+        return;
+    }
     touchStartX.value = event.touches[0].clientX;
+    isSwiping.value = false;
 };
 
 const handleTouchMove = (event) => {
+    if (touchStartX.value === 0) return;
     touchEndX.value = event.touches[0].clientX;
+    const diff = Math.abs(touchStartX.value - touchEndX.value);
+    if (diff > 10) {
+        isSwiping.value = true;
+    }
 };
 
 const handleTouchEnd = () => {
-    if (touchStartX.value - touchEndX.value > 50) {
-        // Swipe para esquerda - próxima imagem
-        nextImage();
-    }
+    if (touchStartX.value === 0) return;
     
-    if (touchEndX.value - touchStartX.value > 50) {
-        // Swipe para direita - imagem anterior
-        prevImage();
+    const swipeDistance = touchStartX.value - touchEndX.value;
+    
+    if (Math.abs(swipeDistance) > 50 && isSwiping.value) {
+        if (swipeDistance > 0) {
+            // Swipe para esquerda - próxima imagem
+            nextImage();
+        } else {
+            // Swipe para direita - imagem anterior
+            prevImage();
+        }
     }
     
     touchStartX.value = 0;
     touchEndX.value = 0;
+    isSwiping.value = false;
 };
 
 onMounted(() => {
