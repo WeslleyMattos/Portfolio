@@ -1,6 +1,25 @@
 <template>
     <Header />
     <section class="min-h-screen bg-gradient-to-br from-black via-slate-950 to-gray-700 py-20 px-6 bg-blend-overlay" style="background-image: url('/dragon.png'); background-size: cover; background-position: center; background-attachment: fixed;">
+        
+        <!-- Aviso Criativo -->
+        <div class="max-w-4xl mx-auto mb-8">
+            <div class="bg-gradient-to-r from-purple-900/80 via-indigo-900/80 to-purple-900/80 border border-purple-500/50 rounded-lg p-4 backdrop-blur-sm shadow-lg shadow-purple-500/20">
+                <div class="flex items-start gap-3">
+                    <span class="text-2xl">✨</span>
+                    <div>
+                        <h3 class="text-purple-300 font-bold text-sm uppercase tracking-wider mb-1">Nota do Desenvolvedor</h3>
+                        <p class="text-gray-300 text-sm leading-relaxed">
+                            Esta página foi <span class="text-yellow-400 font-semibold">intencionalmente criativa e diferente</span>! 
+                            Aqui exploro todas as tecnologias do projeto (Vue, Nuxt, Tailwind CSS, componentes reutilizáveis) 
+                            de forma lúdica, transformando meu perfil profissional em uma ficha de personagem de RPG. 
+                            O objetivo é demonstrar versatilidade técnica e criatividade na apresentação de informações. 🎮
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <CharacterCard>
 
             <!-- Atributos -->
@@ -63,14 +82,14 @@
 
             <!-- Equipamentos -->
             <div class="md:col-span-2">
-                <h2 class="text-xl font-bold mb-4 text-yellow-500">Equipamentos</h2>
+                <h2 class="text-xl font-bold mb-4 text-yellow-500">Setup</h2>
                 <div class="flex flex-wrap gap-2">
-                    <EquipmentItem name="Insomnia" />
-                    <EquipmentItem name="VS Code" />
-                    <EquipmentItem name="Canva" />
-                    <EquipmentItem name="Photoshop" />
-                    <EquipmentItem name="DBeaver" />
-                    <EquipmentItem name="Git / GitHub / Gitlab" />
+                    <EquipmentItem name="Aorus Elite B550m" />
+                    <EquipmentItem name="RAM 32gb DDR4 3200MHz" />
+                    <EquipmentItem name="RTX Gigabyte 5060 OC 8GB" />
+                    <EquipmentItem name="M.2 NVMe 4.0 1TB" />
+                    <EquipmentItem name="Water Cooler 240mm" />
+                    <EquipmentItem name="2 Monitores LG 27'' 75Hz" />
                 </div>
             </div>
 
