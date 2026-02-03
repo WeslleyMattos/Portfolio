@@ -85,6 +85,7 @@
                 <h2 class="text-xl font-bold mb-4 text-yellow-500">Setup</h2>
                 <div class="flex flex-wrap gap-2">
                     <EquipmentItem name="Aorus Elite B550m" />
+                    <EquipmentItem name="Ryzen 5 5600X" />
                     <EquipmentItem name="RAM 32gb DDR4 3200MHz" />
                     <EquipmentItem name="RTX Gigabyte 5060 OC 8GB" />
                     <EquipmentItem name="M.2 NVMe 4.0 1TB" />
