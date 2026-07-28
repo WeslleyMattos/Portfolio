@@ -16,7 +16,7 @@ defineProps({
           <div class="text-3xl flex-shrink-0">{{ skill.icon }}</div>
           <div class="flex-1">
             <div class="flex items-baseline gap-2 mb-1">
-              <span class="text-yellow-400 font-semibold text-sm">{{ skill.title }}</span>
+              <span class="text-yellow-400 font-semibold text-sm">{{ skill.category }}</span>
               <span class="text-gray-400 text-xs">•</span>
               <span class="text-gray-300 font-medium text-sm">{{ skill.name }}</span>
             </div>

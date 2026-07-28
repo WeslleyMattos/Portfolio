@@ -1,5 +1,6 @@
 {
-  "name": "nuxt-app",
+  "name": "weslley-mattos-portfolio",
+  "version": "2.0.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -7,20 +8,24 @@
     "dev": "nuxt dev --port 3010",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
+    "curriculo": "node scripts/gerar-curriculo.mjs",
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "@nuxt/ui": "^3.0.0",
-    "@tailwindcss/vite": "^4.0.14",
+    "@nuxt/image": "^1.11.0",
+    "@nuxt/ui": "^3.3.0",
+    "@tailwindcss/vite": "^4.1.0",
     "@vueuse/motion": "^3.0.3",
-    "nuxt": "^3.16.0",
-    "tailwindcss": "^4.0.14",
+    "boxicons": "^2.1.4",
+    "nuxt": "~4.3.0",
+    "tailwindcss": "^4.1.0",
     "typed.js": "^2.1.0",
     "vue": "^3.5.13",
     "vue-router": "^4.5.0"
   },
   "devDependencies": {
-    "@nuxt/image": "^1.9.0",
+    "@iconify-json/simple-icons": "^1.2.92",
+    "puppeteer": "^25.4.0",
     "sass-embedded": "^1.97.2"
   }
 }

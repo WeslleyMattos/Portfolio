@@ -9,6 +9,12 @@ const props = defineProps({
 const animatedValue = ref(0)
 
 const animateValue = () => {
+  // Quem pediu menos movimento vê o valor final direto
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    animatedValue.value = props.value
+    return
+  }
+
   const duration = 1200 // duração da animação em ms
   const startTime = Date.now()
   const startValue = 0
