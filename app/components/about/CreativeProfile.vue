@@ -64,8 +64,13 @@
 </template>
 
 <script setup>
-import { lifeSkills, setup, softStats, techStats } from '~/data/profile'
+import { computed } from 'vue'
+
+const { perfil } = useConteudo()
+
+const lifeSkills = computed(() => perfil.value.lifeSkills)
+const setup = computed(() => perfil.value.setup)
 
 /* Na ficha de RPG, técnicas e comportamentais aparecem juntas */
-const allStats = [...techStats, ...softStats]
+const allStats = computed(() => [...perfil.value.techStats, ...perfil.value.softStats])
 </script>

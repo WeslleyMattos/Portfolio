@@ -12,6 +12,16 @@ export default defineNuxtConfig({
   css: ["boxicons/css/boxicons.min.css", "~/assets/css/tailwind.css"],
 
   runtimeConfig: {
+    /**
+     * Onde vivem o conteúdo editável e os uploads. Precisa ficar FORA do
+     * .output: o deploy substitui aquele diretório inteiro a cada push.
+     * Em produção, definido por NUXT_CONTEUDO_DIR no PM2.
+     */
+    conteudoDir: './dados',
+    /** Hash scrypt da senha do painel — gere com `npm run senha-admin` */
+    adminSenhaHash: '',
+    /** Segredo que assina o cookie de sessão do painel */
+    adminSessaoSegredo: '',
     public: { siteUrl },
   },
 
@@ -36,9 +46,18 @@ export default defineNuxtConfig({
     pageTransition: { name: "page", mode: "out-in" },
   },
 
-  nitro: {
-    prerender: {
-      routes: ["/", "/sobre", "/projetos", "/curriculo"],
+  /**
+   * O prerender destas rotas foi removido de propósito.
+   *
+   * Elas eram HTML congelado no build, o que era ótimo para performance mas
+   * incompatível com o painel admin: uma edição salva em runtime nunca
+   * apareceria numa página gerada em tempo de build. Agora são SSR, sem
+   * cache, para que o que você salva no painel valha na hora.
+   */
+  routeRules: {
+    // O painel não deve ser indexado nem cacheado por intermediários.
+    "/admin/**": {
+      headers: { "cache-control": "no-store", "x-robots-tag": "noindex, nofollow" },
     },
   },
 

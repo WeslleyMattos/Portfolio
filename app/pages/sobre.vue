@@ -50,9 +50,9 @@
 
         <div class="flex flex-wrap items-center justify-center gap-2.5">
           <a
-            v-if="RESUME.available"
-            :href="RESUME.path"
-            :download="RESUME.fileName"
+            v-if="RESUME.disponivel"
+            href="/curriculo.pdf"
+            :download="RESUME.nomeArquivo"
             class="inline-flex items-center gap-2 rounded-full border border-white/15 px-4 py-2 text-sm font-medium text-fg transition-all duration-300 hover:border-accent-400 hover:bg-accent-500/10 hover:text-accent-300"
           >
             <i class="bx bx-download" aria-hidden="true" />
@@ -89,15 +89,16 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
-import { CONTACT } from '~/data/contact'
-import { RESUME } from '~/data/profile'
+import { computed, onMounted } from 'vue'
+
+const { contato: CONTACT, perfil } = useConteudo()
+const RESUME = computed(() => perfil.value.curriculo)
 
 useSeoMeta({
   title: 'Sobre mim',
   description:
     'Conheça Weslley Renan Mattos: competências, o que entrego como desenvolvedor frontend e uma versão criativa do perfil em formato de ficha de RPG.',
-  ogTitle: `Sobre ${CONTACT.name}`,
+  ogTitle: () => `Sobre ${CONTACT.value.name}`,
 })
 
 const { mode, dialogOpen, restore, setMode, toggleMode, closeDialog } = useAboutMode()

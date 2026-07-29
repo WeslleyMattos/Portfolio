@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /admin
 
-Sitemap: https://weslleymattos.dev/sitemap.xml
+Sitemap: https://weslleymattos.com.br/sitemap.xml

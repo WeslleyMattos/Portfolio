@@ -9,6 +9,7 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "curriculo": "node scripts/gerar-curriculo.mjs",
+    "senha-admin": "node scripts/gerar-senha-admin.mjs",
     "postinstall": "nuxt prepare"
   },
   "dependencies": {

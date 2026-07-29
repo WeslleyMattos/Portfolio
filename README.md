@@ -16,7 +16,7 @@ A escolha fica salva no navegador e pode ser trocada a qualquer momento.
 
 | Camada      | Tecnologia                                  |
 | ----------- | ------------------------------------------- |
-| Framework   | Nuxt 4.3 (SSR + pré-renderização das rotas) |
+| Framework   | Nuxt 4.3 (SSR)                              |
 | UI          | Vue 3, Nuxt UI, Tailwind CSS 4              |
 | Imagens     | `@nuxt/image` com IPX (conversão para WebP) |
 | Ícones      | Boxicons (pacote local, sem CDN)            |
@@ -47,11 +47,10 @@ npm run build
 npm run preview
 ```
 
-Geração estática (o site é totalmente pré-renderizável):
-
-```bash
-npm run generate
-```
+> **Geração estática não é mais suportada.** O conteúdo passou a ser lido em runtime para
+> que o painel admin funcione sem rebuild — um site estático congelaria os dados no build
+> e as edições nunca apareceriam. O `npm run generate` continua no `package.json`, mas
+> geraria um site com o conteúdo da semente.
 
 ## Estrutura
 
@@ -66,36 +65,120 @@ app/
 │   ├── about/               # Diálogo de modo + os dois perfis
 │   ├── projects/            # Card da galeria e lightbox
 │   └── rpg/                 # Componentes da ficha de personagem
+│   └── admin/               # Formulários do painel
 ├── composables/
-│   └── useAboutMode.ts      # Persistência do modo escolhido
-├── data/                    # Contato, projetos e conteúdo do perfil
-├── layouts/default.vue
-└── pages/                   # index, sobre, projetos
+│   ├── useAboutMode.ts      # Persistência do modo escolhido
+│   ├── useConteudo.ts       # Conteúdo do site vindo da API
+│   └── useAdminApi.ts       # Chamadas do painel
+├── data/                    # Semente do conteúdo + tipos
+├── layouts/                 # default.vue e admin.vue
+├── middleware/admin.ts      # Protege as rotas do painel
+├── plugins/                 # Beacon de métricas
+└── pages/
+    ├── index, sobre, projetos, curriculo
+    └── admin/               # login, métricas, perfil, currículo, projetos
 public/                      # Imagens, robots.txt
-server/routes/sitemap.xml.ts # Sitemap gerado no servidor
+server/
+├── api/                     # Conteúdo público + rotas do painel
+├── routes/                  # sitemap.xml, /uploads, /curriculo.pdf
+└── utils/                   # Armazenamento, auth, métricas
 antigo/                      # Versão original em HTML puro (histórico)
 ```
 
-Todo o conteúdo editável está em `app/data/` — não é preciso mexer no markup para
-atualizar projetos, contatos ou competências.
+Os arquivos em `app/data/` **não são mais a fonte de verdade em produção** — viraram a
+*semente*. No primeiro boot o servidor grava esse conteúdo como JSON no diretório de
+dados e passa a ler de lá, que é o que o painel edita. Eles continuam servindo de
+fallback no cliente caso a API falhe.
+
+## Painel admin
+
+Fica em `/admin` e permite editar foto de perfil, currículo e projetos, além de mostrar
+métricas de acesso — tudo sem rebuild.
+
+### Como funciona
+
+O conteúdo vive em JSON num diretório **fora do `.output`**, porque o deploy substitui o
+`.output` inteiro a cada push e levaria os dados junto:
+
+```
+/www/wwwroot/weslleymattos.com.br/
+├── .output/          <- trocado a cada deploy
+├── dados/            <- sobrevive aos deploys
+│   ├── perfil.json
+│   ├── projetos.json
+│   ├── metricas.json
+│   └── uploads/      <- fotos e PDF enviados pelo painel
+└── ecosystem.config.cjs
+```
+
+As escritas são atômicas (grava num temporário e renomeia) e serializadas por arquivo,
+então uma queda no meio da gravação não deixa JSON truncado.
+
+### Configurar
+
+Gere a senha e o segredo de sessão:
+
+```bash
+npm run senha-admin
+```
+
+A senha é lida sem eco e nunca é gravada em disco — o comando devolve só o hash scrypt.
+Copie `ecosystem.config.exemplo.cjs` para o servidor como `ecosystem.config.cjs`, cole os
+dois valores e suba com `pm2 start ecosystem.config.cjs`.
+
+Para desenvolver local, ponha as variáveis num `.env` na raiz.
+
+### Métricas
+
+Visitas são contadas por um beacon no cliente, não por requisição no servidor — assim
+bots, health check e o `curl` de verificação do deploy não entram na conta. Acessos ao
+próprio `/admin` são ignorados. Os downloads são contados na rota `/curriculo.pdf`, que
+contabiliza antes de entregar o arquivo.
+
+Os contadores ficam em memória e são gravados em disco com 3 segundos de atraso. Um
+restart pode perder os últimos segundos de contagem — trade-off deliberado para não
+gravar em disco a cada acesso.
+
+### O que o painel ainda não edita
+
+As perícias e equipamentos do **Modo Criativo** (`lifeSkills` e `setup`) continuam vindo
+de `app/data/profile.ts`. Eles são preservados no JSON e podem ser editados à mão lá, mas
+ainda não têm tela.
 
 ## Variáveis de ambiente
 
-| Variável               | Descrição                                    | Padrão                       |
-| ---------------------- | -------------------------------------------- | ---------------------------- |
-| `NUXT_PUBLIC_SITE_URL` | URL de produção, usada no SEO e no sitemap    | `https://weslleymattos.dev`  |
+| Variável                    | Descrição                                        | Padrão                          |
+| --------------------------- | ------------------------------------------------ | ------------------------------- |
+| `NUXT_PUBLIC_SITE_URL`      | URL de produção, usada no SEO e no sitemap        | `https://weslleymattos.com.br`  |
+| `NUXT_CONTEUDO_DIR`         | Onde ficam os JSON e os uploads                   | `./dados`                       |
+| `NUXT_ADMIN_SENHA_HASH`     | Hash scrypt da senha do painel                    | — (sem ele o login fica off)    |
+| `NUXT_ADMIN_SESSAO_SEGREDO` | Segredo que assina o cookie de sessão             | — (obrigatório para o painel)   |
+
+## Deploy
+
+Push na `main` dispara `.github/workflows/deploy.yml`: build no runner, envio do
+`.output` por rsync, troca atômica no servidor, `pm2 restart`, verificação de que o site
+respondeu 200 e rollback automático se não respondeu.
+
+O build roda no GitHub Actions e não na VPS de propósito — o `.output` do Nitro é
+autocontido, então o servidor não precisa de `node_modules` nem aguenta o pico de RAM do
+Vite ao lado dos outros sites.
+
+Secrets necessários: `SSH_HOST`, `SSH_USER`, `SSH_KEY` e, se a porta não for 22,
+`SSH_PORT`.
 
 ## Currículo
 
-A rota `/curriculo` é uma folha A4 pronta para impressão, montada com os mesmos dados de
-`app/data/profile.ts`. O PDF em `public/` é gerado a partir dela:
+A rota `/curriculo` é uma folha A4 pronta para impressão, montada com os dados do painel.
+O PDF é gerado a partir dela:
 
 ```bash
 npm run curriculo
 ```
 
-O servidor precisa estar rodando (`npm run dev`). Sempre que atualizar experiência,
-formação ou competências, rode o comando de novo para o PDF acompanhar.
+O servidor precisa estar rodando (`npm run dev`). Depois envie o arquivo pelo painel, em
+**Currículo → Enviar novo PDF** — o download público passa por `/curriculo.pdf`, que é o
+que permite contar os downloads.
 
 ## Pendências
 

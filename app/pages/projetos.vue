@@ -70,8 +70,8 @@
 
 <script setup>
 import { ref } from 'vue'
-import { projects } from '~/data/projects'
-import { WHATSAPP_URL } from '~/data/contact'
+
+const { projetos: projects, whatsappUrl: WHATSAPP_URL } = useConteudo()
 
 useSeoMeta({
   title: 'Projetos',

@@ -89,7 +89,10 @@
 
 <script setup>
 import { onMounted, onUnmounted, ref, watch } from 'vue'
-import { WHATSAPP_URL } from '~/data/contact'
+
+// Vem do conteúdo em runtime: se você trocar o telefone no painel, o link
+// do WhatsApp acompanha sem precisar de rebuild.
+const { whatsappUrl: WHATSAPP_URL } = useConteudo()
 
 const navItems = [
   { to: '/', label: 'Início', icon: 'bx bx-home-alt' },

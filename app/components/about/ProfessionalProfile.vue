@@ -4,7 +4,7 @@
     <section class="surface-glass overflow-hidden rounded-card" aria-labelledby="perfil-title">
       <div class="grid gap-8 p-7 sm:p-10 lg:grid-cols-[auto_1fr] lg:items-start">
         <div class="mx-auto lg:mx-0">
-          <ProfileImg src="/eu.png" :alt="`Foto de ${CONTACT.name}`" size="sm" />
+          <ProfileImg :src="perfil.fotoPerfil" :alt="`Foto de ${CONTACT.name}`" size="sm" />
         </div>
 
         <div class="text-center lg:text-left">
@@ -61,9 +61,9 @@
           <!-- Ações -->
           <div class="mt-7 flex flex-col justify-center gap-3 sm:flex-row lg:justify-start">
             <a
-              v-if="RESUME.available"
-              :href="RESUME.path"
-              :download="RESUME.fileName"
+              v-if="RESUME.disponivel"
+              href="/curriculo.pdf"
+              :download="RESUME.nomeArquivo"
               class="inline-flex items-center justify-center gap-2 rounded-full bg-accent-500 px-7 py-3 font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-accent-400 hover:shadow-xl hover:shadow-accent-500/40"
             >
               <i class="bx bx-download text-lg" aria-hidden="true" />
@@ -284,20 +284,23 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
-import { CONTACT, WHATSAPP_URL } from '~/data/contact'
-import {
-  certifications,
-  education,
-  experience,
-  languages,
-  RESUME,
-  skillGroups,
-  softStats,
-  SUMMARY,
-  techStats,
-  toPercent,
-} from '~/data/profile'
+import { computed, onMounted, ref } from 'vue'
+
+/* Conteúdo vindo do painel. Os nomes antigos foram mantidos para não
+   reescrever o template inteiro — só a origem dos dados mudou. */
+const { contato: CONTACT, perfil, whatsappUrl: WHATSAPP_URL } = useConteudo()
+
+const SUMMARY = computed(() => perfil.value.resumo)
+const experience = computed(() => perfil.value.experiencia)
+const techStats = computed(() => perfil.value.techStats)
+const softStats = computed(() => perfil.value.softStats)
+const skillGroups = computed(() => perfil.value.skillGroups)
+const education = computed(() => perfil.value.formacao)
+const certifications = computed(() => perfil.value.certificacoes)
+const languages = computed(() => perfil.value.idiomas)
+const RESUME = computed(() => perfil.value.curriculo)
+
+const toPercent = paraPorcentagem
 
 /* As barras começam em zero e animam ao montar */
 const mounted = ref(false)

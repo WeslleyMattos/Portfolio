@@ -15,9 +15,9 @@
 
         <div class="flex flex-wrap items-center gap-2.5">
           <a
-            v-if="RESUME.available"
-            :href="RESUME.path"
-            :download="RESUME.fileName"
+            v-if="RESUME.disponivel"
+            href="/curriculo.pdf"
+            :download="RESUME.nomeArquivo"
             class="inline-flex items-center gap-2 rounded-full bg-accent-500 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-accent-400"
           >
             <i class="bx bx-download text-lg" aria-hidden="true" />
@@ -146,22 +146,24 @@
 </template>
 
 <script setup>
-import { CONTACT } from '~/data/contact'
-import {
-  certifications,
-  education,
-  experience,
-  languages,
-  RESUME,
-  skillGroups,
-  SUMMARY,
-} from '~/data/profile'
+import { computed } from 'vue'
+
+const { contato: CONTACT, perfil } = useConteudo()
+
+const SUMMARY = computed(() => perfil.value.resumo)
+const experience = computed(() => perfil.value.experiencia)
+const skillGroups = computed(() => perfil.value.skillGroups)
+const education = computed(() => perfil.value.formacao)
+const certifications = computed(() => perfil.value.certificacoes)
+const languages = computed(() => perfil.value.idiomas)
+const RESUME = computed(() => perfil.value.curriculo)
 
 definePageMeta({ layout: false })
 
 useSeoMeta({
-  title: `Currículo — ${CONTACT.name}`,
-  description: `Currículo de ${CONTACT.name}, ${CONTACT.role}. Experiência, competências técnicas e formação.`,
+  title: () => `Currículo — ${CONTACT.value.name}`,
+  description: () =>
+    `Currículo de ${CONTACT.value.name}, ${CONTACT.value.role}. Experiência, competências técnicas e formação.`,
   robots: 'noindex',
 })
 

@@ -109,7 +109,7 @@
           class="flex animate-[slideLeft_0.8s_ease_forwards] justify-center opacity-0 delay-300"
         >
           <ProfileImg
-            src="/eu.png"
+            :src="perfil.fotoPerfil"
             :alt="`${CONTACT.name}, ${CONTACT.role}`"
             size="lg"
             priority
@@ -201,13 +201,19 @@
 <script setup>
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import Typed from 'typed.js'
-import { CONTACT, SOCIAL_LINKS, WHATSAPP_URL } from '~/data/contact'
+
+const {
+  contato: CONTACT,
+  perfil,
+  linksSociais: SOCIAL_LINKS,
+  whatsappUrl: WHATSAPP_URL,
+} = useConteudo()
 
 useSeoMeta({
   title: 'Desenvolvedor Frontend',
   description:
     'Weslley Renan Mattos, desenvolvedor frontend em Santa Catarina. Crio interfaces modernas, responsivas e performáticas com Vue, Nuxt e Tailwind CSS.',
-  ogTitle: `${CONTACT.name} — ${CONTACT.role}`,
+  ogTitle: () => `${CONTACT.value.name} — ${CONTACT.value.role}`,
 })
 
 const stack = [

@@ -91,9 +91,9 @@
             class="mt-7 flex flex-col items-center gap-4 border-t border-white/10 pt-6 sm:flex-row sm:justify-between"
           >
             <a
-              v-if="RESUME.available"
-              :href="RESUME.path"
-              :download="RESUME.fileName"
+              v-if="RESUME.disponivel"
+              href="/curriculo.pdf"
+              :download="RESUME.nomeArquivo"
               class="inline-flex items-center gap-2 rounded-full border border-white/15 px-6 py-3 text-sm font-semibold text-fg transition-all duration-300 hover:-translate-y-0.5 hover:border-accent-400 hover:bg-accent-500/10 hover:text-accent-300"
             >
               <i class="bx bx-download text-lg" aria-hidden="true" />
@@ -123,8 +123,10 @@
 </template>
 
 <script setup>
-import { nextTick, ref, watch } from 'vue'
-import { RESUME } from '~/data/profile'
+import { computed, nextTick, ref, watch } from 'vue'
+
+const { perfil } = useConteudo()
+const RESUME = computed(() => perfil.value.curriculo)
 
 const props = defineProps({
   open: { type: Boolean, default: false },

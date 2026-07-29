@@ -18,6 +18,13 @@ logs
 .fleet
 .idea
 
+# Conteudo editado pelo painel admin e uploads (vive fora do build)
+dados
+
+# Config do PM2 no servidor: carrega senha e segredo de sessao.
+# O modelo versionado e o ecosystem.config.exemplo.cjs
+ecosystem.config.cjs
+
 # Local env files
 .env
 .env.*

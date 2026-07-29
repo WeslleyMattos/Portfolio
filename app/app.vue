@@ -5,56 +5,61 @@
 </template>
 
 <script setup>
-import { CONTACT } from '~/data/contact'
+import { computed } from 'vue'
 
 const { siteUrl } = useRuntimeConfig().public
+const { contato, perfil } = useConteudo()
 
-/* Metadados padrão — cada página sobrescreve o que precisar */
+/* A foto de perfil vira a imagem de compartilhamento — trocar a foto no
+   painel atualiza também o preview no WhatsApp e no LinkedIn. */
+const imagemSocial = computed(() => `${siteUrl}${perfil.value.fotoPerfil}`)
+
+/* Metadados padrão — cada página sobrescreve o que precisar.
+   Tudo em forma de função para acompanhar as edições do painel. */
 useSeoMeta({
-  titleTemplate: (title) => (title ? `${title} | ${CONTACT.shortName}` : CONTACT.name),
+  titleTemplate: (title) =>
+    title ? `${title} | ${contato.value.shortName}` : contato.value.name,
   description:
     'Portfólio de Weslley Renan Mattos, desenvolvedor frontend especializado em Vue, Nuxt e Tailwind CSS. Interfaces modernas, responsivas e performáticas.',
-  ogSiteName: CONTACT.name,
+  ogSiteName: () => contato.value.name,
   ogType: 'website',
   ogLocale: 'pt_BR',
-  // TODO: trocar por uma arte 1200x630 dedicada (og-image.png) quando houver
-  ogImage: `${siteUrl}/eu.png`,
-  ogImageAlt: `${CONTACT.name} — ${CONTACT.role}`,
+  ogImage: () => imagemSocial.value,
+  ogImageAlt: () => `${contato.value.name} — ${contato.value.role}`,
   twitterCard: 'summary_large_image',
-  twitterImage: `${siteUrl}/eu.png`,
-  author: CONTACT.name,
+  twitterImage: () => imagemSocial.value,
+  author: () => contato.value.name,
 })
 
 /* Dados estruturados para o Google entender quem é o dono do site */
-useHead({
-  script: [
-    {
-      type: 'application/ld+json',
-      innerHTML: JSON.stringify({
-        '@context': 'https://schema.org',
-        '@type': 'Person',
-        name: CONTACT.name,
-        alternateName: CONTACT.shortName,
-        jobTitle: CONTACT.role,
-        email: `mailto:${CONTACT.email}`,
-        url: siteUrl,
-        image: `${siteUrl}/eu.png`,
-        sameAs: [CONTACT.github, CONTACT.linkedin],
-        address: {
-          '@type': 'PostalAddress',
-          addressRegion: 'SC',
-          addressCountry: 'BR',
-        },
-        knowsAbout: [
-          'Vue.js',
-          'Nuxt',
-          'Tailwind CSS',
-          'JavaScript',
-          'TypeScript',
-          'Desenvolvimento Frontend',
-        ],
-      }),
+const dadosEstruturados = computed(() =>
+  JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: contato.value.name,
+    alternateName: contato.value.shortName,
+    jobTitle: contato.value.role,
+    email: `mailto:${contato.value.email}`,
+    url: siteUrl,
+    image: imagemSocial.value,
+    sameAs: [contato.value.github, contato.value.linkedin],
+    address: {
+      '@type': 'PostalAddress',
+      addressRegion: 'SC',
+      addressCountry: 'BR',
     },
-  ],
+    knowsAbout: [
+      'Vue.js',
+      'Nuxt',
+      'Tailwind CSS',
+      'JavaScript',
+      'TypeScript',
+      'Desenvolvimento Frontend',
+    ],
+  }),
+)
+
+useHead({
+  script: [{ type: 'application/ld+json', innerHTML: dadosEstruturados }],
 })
 </script>

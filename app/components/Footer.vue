@@ -107,7 +107,11 @@
 </template>
 
 <script setup>
-import { CONTACT, SOCIAL_LINKS, WHATSAPP_URL } from '~/data/contact'
+const {
+  contato: CONTACT,
+  linksSociais: SOCIAL_LINKS,
+  whatsappUrl: WHATSAPP_URL,
+} = useConteudo()
 
 const navItems = [
   { to: '/', label: 'Início' },

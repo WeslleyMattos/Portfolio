@@ -1,0 +1,151 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "README.md"
+      - "antigo/**"
+  workflow_dispatch:
+
+# Impede que dois deploys se atropelem; o mais novo espera o anterior terminar.
+concurrency:
+  group: deploy-producao
+  cancel-in-progress: false
+
+env:
+  DESTINO: /www/wwwroot/weslleymattos.com.br
+  PM2_APP: portfolio
+  SITE: https://weslleymattos.com.br/
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.16.0
+          cache: npm
+
+      - name: Instalar dependencias
+        # --legacy-peer-deps: bug do arborist no npm 10 com a arvore do Nuxt 4
+        # PUPPETEER_SKIP_DOWNLOAD: puppeteer so e usado pelo script do curriculo,
+        # nao pelo build. Sem isso o CI baixa um Chromium inteiro a cada run.
+        env:
+          PUPPETEER_SKIP_DOWNLOAD: "true"
+        run: npm ci --legacy-peer-deps
+
+      - name: Build
+        run: npm run build
+
+      - name: Configurar chave SSH
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "${{ secrets.SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -p "${{ secrets.SSH_PORT || 22 }}" -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: Enviar build para a VPS
+        run: |
+          rsync -az --delete \
+            -e "ssh -i ~/.ssh/deploy_key -p ${{ secrets.SSH_PORT || 22 }} -o StrictHostKeyChecking=yes" \
+            .output/ \
+            "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${DESTINO}/.output-novo/"
+
+      - name: Trocar versao e reiniciar
+        id: trocar
+        run: |
+          ssh -i ~/.ssh/deploy_key -p "${{ secrets.SSH_PORT || 22 }}" \
+            "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" \
+            "DESTINO='${DESTINO}' PM2_APP='${PM2_APP}' bash -s" <<'REMOTO'
+          set -euo pipefail
+          cd "$DESTINO"
+
+          # O conteudo editado pelo painel e os uploads vivem AQUI, fora do
+          # .output — que e substituido inteiro a cada deploy. Criar se faltar
+          # cobre o primeiro deploy e um servidor novo.
+          mkdir -p dados/uploads
+
+          # pm2 costuma nao estar no PATH de uma sessao ssh nao-interativa.
+          # Nada de "teste && atribuicao" aqui: sob `set -e`, uma lista && que
+          # termina em falso encerra o script inteiro.
+          PM2="$(command -v pm2 || true)"
+          if [ -z "$PM2" ]; then
+            for candidato in /usr/local/bin/pm2 /usr/bin/pm2 /www/server/nodejs/*/bin/pm2; do
+              if [ -x "$candidato" ]; then
+                PM2="$candidato"
+                break
+              fi
+            done
+          fi
+          if [ -z "$PM2" ]; then
+            echo "pm2 nao encontrado no servidor" >&2
+            exit 1
+          fi
+
+          # Troca atomica, guardando a versao anterior para rollback.
+          rm -rf .output-anterior
+          if [ -d .output ]; then
+            mv .output .output-anterior
+          fi
+          mv .output-novo .output
+
+          # Reinicia pelo ecosystem quando ele existe: e de la que vem a senha
+          # do painel e o segredo de sessao.
+          #
+          # ATENCAO: nada de `--update-env` no caminho simples. Essa flag faz o
+          # pm2 substituir o ambiente do processo pelo ambiente do shell atual
+          # — e este shell ssh nao tem as variaveis do painel. O app subiria
+          # sem senha configurada e o /admin pararia de autenticar.
+          if [ -f ecosystem.config.cjs ]; then
+            "$PM2" restart ecosystem.config.cjs --only "$PM2_APP" --update-env
+          else
+            "$PM2" restart "$PM2_APP"
+          fi
+          "$PM2" save --force
+          REMOTO
+
+      - name: Verificar se o site voltou
+        run: |
+          sleep 5
+          for tentativa in 1 2 3 4 5 6; do
+            codigo=$(curl -s -o /dev/null -w '%{http_code}' "$SITE" || echo 000)
+            if [ "$codigo" = "200" ]; then
+              echo "Site respondeu 200 na tentativa $tentativa"
+              exit 0
+            fi
+            echo "tentativa $tentativa: HTTP $codigo, aguardando..."
+            sleep 5
+          done
+          echo "::error::Site nao respondeu 200 apos o deploy"
+          exit 1
+
+      # So faz rollback se a troca chegou a acontecer. Sem esta condicao, uma
+      # falha no build ou no rsync restauraria um .output-anterior antigo por
+      # cima de uma versao que estava saudavel.
+      - name: Rollback
+        if: failure() && steps.trocar.outcome == 'success'
+        run: |
+          ssh -i ~/.ssh/deploy_key -p "${{ secrets.SSH_PORT || 22 }}" \
+            "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" \
+            "DESTINO='${DESTINO}' PM2_APP='${PM2_APP}' bash -s" <<'REMOTO'
+          set -euo pipefail
+          cd "$DESTINO"
+          if [ -d .output-anterior ]; then
+            PM2="$(command -v pm2 || echo /usr/local/bin/pm2)"
+            rm -rf .output
+            mv .output-anterior .output
+            if [ -f ecosystem.config.cjs ]; then
+              "$PM2" restart ecosystem.config.cjs --only "$PM2_APP" --update-env
+            else
+              "$PM2" restart "$PM2_APP"
+            fi
+            echo "rollback aplicado: versao anterior restaurada"
+          else
+            echo "sem versao anterior para restaurar" >&2
+          fi
+          REMOTO

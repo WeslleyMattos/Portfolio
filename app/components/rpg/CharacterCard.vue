@@ -54,5 +54,5 @@
 </template>
 
 <script setup>
-import { CONTACT } from '~/data/contact'
+const { contato: CONTACT } = useConteudo()
 </script>
