@@ -87,7 +87,14 @@
             <h3 class="rotulo">{{ grupo.titulo }}</h3>
             <div class="space-y-2">
               <div v-for="(stat, i) in perfil[grupo.chave]" :key="i" class="flex gap-2">
-                <input v-model="stat.label" type="text" class="campo" placeholder="Habilidade" />
+                <!-- min-w-0: sem isso o input de texto não encolhe abaixo do
+                     tamanho do conteúdo e empurra a linha para fora da coluna -->
+                <input
+                  v-model="stat.label"
+                  type="text"
+                  class="campo min-w-0 flex-1"
+                  placeholder="Habilidade"
+                />
                 <input
                   v-model.number="stat.value"
                   type="number"
