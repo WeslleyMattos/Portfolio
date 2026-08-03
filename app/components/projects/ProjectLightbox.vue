@@ -39,11 +39,10 @@
 
         <!-- Palco -->
         <div class="relative flex min-h-0 flex-1 items-center justify-center p-4 sm:p-8">
-          <NuxtImg
+          <Imagem
             :key="images[index]"
             :src="images[index]"
             :alt="`${project?.title} — imagem ${index + 1} de ${images.length}`"
-            format="webp"
             quality="88"
             class="max-h-full max-w-full rounded-xl object-contain shadow-2xl"
           />
@@ -87,12 +86,11 @@
                 :aria-current="i === index ? 'true' : undefined"
                 @click="index = i"
               >
-                <NuxtImg
+                <Imagem
                   :src="image"
                   alt=""
                   width="96"
                   height="64"
-                  format="webp"
                   quality="55"
                   loading="lazy"
                   class="h-full w-full object-cover"

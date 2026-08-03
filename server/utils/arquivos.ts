@@ -15,6 +15,15 @@ export const TIPOS_DOCUMENTO: Record<string, string> = {
 export const LIMITE_IMAGEM = 8 * 1024 * 1024 // 8 MB
 export const LIMITE_DOCUMENTO = 15 * 1024 * 1024 // 15 MB
 
+/**
+ * Maior lado de uma imagem enviada, em pixels.
+ *
+ * 1600 cobre a maior renderização do site (a foto da home em telas retina)
+ * com folga, e derruba drasticamente o peso: uma foto de celular de 4000px
+ * e 2 MB sai daqui com algumas dezenas de KB.
+ */
+export const LADO_MAXIMO = 1600
+
 /** Extensão -> content-type, para servir de volta o que foi gravado */
 export const CONTENT_TYPES: Record<string, string> = {
   png: 'image/png',

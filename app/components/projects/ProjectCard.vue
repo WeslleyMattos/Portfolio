@@ -7,12 +7,11 @@
       class="relative overflow-hidden bg-ink-900"
       :class="featured ? 'aspect-[16/10]' : 'aspect-[16/11]'"
     >
-      <NuxtImg
+      <Imagem
         :src="project.images[0]"
         :alt="`Captura de tela do projeto ${project.title}`"
         :width="featured ? 900 : 640"
         :height="featured ? 562 : 440"
-        format="webp"
         quality="80"
         :loading="eager ? 'eager' : 'lazy'"
         class="h-full w-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.06]"

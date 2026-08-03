@@ -15,12 +15,11 @@
     </div>
 
     <!-- Foto -->
-    <NuxtImg
+    <Imagem
       :src="src"
       :alt="alt"
       :width="pixelSize"
       :height="pixelSize"
-      format="webp"
       quality="85"
       :loading="priority ? 'eager' : 'lazy'"
       :preload="priority"
