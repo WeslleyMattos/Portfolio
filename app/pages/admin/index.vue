@@ -66,18 +66,20 @@
           Nenhum acesso registrado ainda neste período.
         </div>
 
-        <div v-else class="flex h-44 items-end gap-[3px]">
+        <div v-else class="flex h-44 items-stretch gap-[3px]">
           <div
             v-for="dia in dados.serie"
             :key="dia.dia"
-            class="group relative flex flex-1 flex-col justify-end gap-[2px]"
+            class="group relative flex h-full flex-1 flex-col justify-end gap-[2px]"
             :title="`${formatarDia(dia.dia)} — ${dia.visitas} visita(s), ${dia.downloads} download(s)`"
           >
             <div
+              v-if="dia.downloads > 0"
               class="w-full rounded-t-sm bg-glow-500/80"
               :style="{ height: `${altura(dia.downloads)}%` }"
             />
             <div
+              v-if="dia.visitas > 0"
               class="w-full rounded-t-sm bg-accent-500/80 transition-colors group-hover:bg-accent-400"
               :style="{ height: `${altura(dia.visitas)}%` }"
             />
@@ -122,7 +124,9 @@ const totalPeriodo = computed(() =>
   dados.value ? dados.value.serie.reduce((s, d) => s + d.visitas + d.downloads, 0) : 0,
 )
 
-const altura = (valor) => (valor / maximo.value) * 100
+/* Barras com 1 ou 2 acessos num período de pico alto sumiriam; o piso de 3%
+   garante que qualquer dia com movimento apareça. */
+const altura = (valor) => (valor > 0 ? Math.max(3, (valor / maximo.value) * 100) : 0)
 
 const formatar = (n) => new Intl.NumberFormat('pt-BR').format(n ?? 0)
 
