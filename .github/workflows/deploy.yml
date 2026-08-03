@@ -43,11 +43,31 @@ jobs:
         run: npm run build
 
       - name: Configurar chave SSH
+        env:
+          SSH_KEY: ${{ secrets.SSH_KEY }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_PORT: ${{ secrets.SSH_PORT || 22 }}
         run: |
+          set -euo pipefail
+
+          # Sem esta checagem o passo morria no ssh-keyscan com host vazio, e o
+          # 2>/dev/null escondia o motivo. Falhar aqui diz qual secret falta.
+          faltando=""
+          for nome in SSH_KEY SSH_HOST SSH_USER; do
+            if [ -z "${!nome:-}" ]; then
+              faltando="$faltando $nome"
+            fi
+          done
+          if [ -n "$faltando" ]; then
+            echo "::error::Secrets ausentes em Settings > Secrets and variables > Actions:$faltando"
+            exit 1
+          fi
+
           mkdir -p ~/.ssh
-          printf '%s\n' "${{ secrets.SSH_KEY }}" > ~/.ssh/deploy_key
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
-          ssh-keyscan -p "${{ secrets.SSH_PORT || 22 }}" -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts 2>/dev/null
+          ssh-keyscan -p "$SSH_PORT" -H "$SSH_HOST" >> ~/.ssh/known_hosts
 
       - name: Enviar build para a VPS
         run: |
@@ -70,12 +90,23 @@ jobs:
           # cobre o primeiro deploy e um servidor novo.
           mkdir -p dados/uploads
 
-          # pm2 costuma nao estar no PATH de uma sessao ssh nao-interativa.
+          # O node deste servidor vem de nvm, carregado so pelo .bashrc — que
+          # uma sessao ssh nao-interativa nao le. Sem isso nao ha node nem pm2
+          # no PATH.
+          #
+          # Carregar o nvm tambem evita uma armadilha: existe um pm2 antigo em
+          # /www/server/nodejs/v14.17.6/bin/pm2 que satisfaz um teste -x mas
+          # nao executa ("env: node: No such file or directory"). Procurar por
+          # caminho fixo encontraria justamente esse.
+          export NVM_DIR="/www/server/nvm"
+          # shellcheck disable=SC1091
+          [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" >/dev/null 2>&1 || true
+
           # Nada de "teste && atribuicao" aqui: sob `set -e`, uma lista && que
           # termina em falso encerra o script inteiro.
           PM2="$(command -v pm2 || true)"
           if [ -z "$PM2" ]; then
-            for candidato in /usr/local/bin/pm2 /usr/bin/pm2 /www/server/nodejs/*/bin/pm2; do
+            for candidato in /www/server/nvm/versions/node/*/bin/pm2 /usr/local/bin/pm2 /usr/bin/pm2; do
               if [ -x "$candidato" ]; then
                 PM2="$candidato"
                 break
@@ -86,6 +117,10 @@ jobs:
             echo "pm2 nao encontrado no servidor" >&2
             exit 1
           fi
+          # O shebang do pm2 chama `env node`; garante o node vizinho no PATH
+          PATH="$(dirname "$PM2"):$PATH"
+          export PATH
+          echo "usando pm2: $PM2 ($("$PM2" -v)) com node $(node -v)"
 
           # Troca atomica, guardando a versao anterior para rollback.
           rm -rf .output-anterior
@@ -135,8 +170,19 @@ jobs:
             "DESTINO='${DESTINO}' PM2_APP='${PM2_APP}' bash -s" <<'REMOTO'
           set -euo pipefail
           cd "$DESTINO"
+          export NVM_DIR="/www/server/nvm"
+          # shellcheck disable=SC1091
+          [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" >/dev/null 2>&1 || true
+
           if [ -d .output-anterior ]; then
-            PM2="$(command -v pm2 || echo /usr/local/bin/pm2)"
+            PM2="$(command -v pm2 || true)"
+            if [ -z "$PM2" ]; then
+              for candidato in /www/server/nvm/versions/node/*/bin/pm2 /usr/local/bin/pm2; do
+                if [ -x "$candidato" ]; then PM2="$candidato"; break; fi
+              done
+            fi
+            PATH="$(dirname "$PM2"):$PATH"
+            export PATH
             rm -rf .output
             mv .output-anterior .output
             if [ -f ecosystem.config.cjs ]; then
