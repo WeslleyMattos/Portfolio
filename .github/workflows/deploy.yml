@@ -67,7 +67,27 @@ jobs:
           mkdir -p ~/.ssh
           printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
-          ssh-keyscan -p "$SSH_PORT" -H "$SSH_HOST" >> ~/.ssh/known_hosts
+
+          # O timeout padrao do ssh-keyscan e 5s. O runner fica na nuvem e a
+          # VPS no Brasil: um deploy ja se perdeu exatamente aqui, sem o runner
+          # sequer aparecer no log de ssh do servidor. Timeout folgado e tres
+          # tentativas cobrem a lentidao ocasional sem mascarar erro real.
+          for tentativa in 1 2 3; do
+            if ssh-keyscan -T 20 -p "$SSH_PORT" -H "$SSH_HOST" > /tmp/hostkey 2> /tmp/keyscan.err \
+               && [ -s /tmp/hostkey ]; then
+              cat /tmp/hostkey >> ~/.ssh/known_hosts
+              echo "chave do host obtida na tentativa $tentativa"
+              exit 0
+            fi
+            echo "tentativa $tentativa nao obteve a chave de $SSH_HOST:$SSH_PORT"
+            sed 's/^/  /' /tmp/keyscan.err || true
+            # if/fi e nao "teste && comando": sob set -e, uma lista && que
+            # termina em falso encerraria o passo na ultima volta.
+            if [ "$tentativa" -lt 3 ]; then sleep 5; fi
+          done
+
+          echo "::error::Nao consegui obter a chave do host $SSH_HOST:$SSH_PORT em 3 tentativas. Verifique se a VPS esta no ar e se a porta $SSH_PORT aceita conexao de qualquer origem."
+          exit 1
 
       - name: Enviar build para a VPS
         run: |
