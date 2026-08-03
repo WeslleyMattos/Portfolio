@@ -66,29 +66,48 @@
           Nenhum acesso registrado ainda neste período.
         </div>
 
-        <div v-else class="flex h-44 items-stretch gap-[3px]">
-          <div
-            v-for="dia in dados.serie"
-            :key="dia.dia"
-            class="group relative flex h-full flex-1 flex-col justify-end gap-[2px]"
-            :title="`${formatarDia(dia.dia)} — ${dia.visitas} visita(s), ${dia.downloads} download(s)`"
-          >
+        <!-- Em telas estreitas 30 rótulos não cabem lado a lado; a largura
+             mínima com scroll evita que eles se sobreponham. -->
+        <div v-else class="-mx-2 overflow-x-auto px-2 pb-1">
+          <div class="flex min-w-[560px] gap-[3px]">
+            <!-- O rótulo mora dentro da mesma coluna da barra: é o que garante
+                 que dia e barra fiquem alinhados em qualquer largura. -->
             <div
-              v-if="dia.downloads > 0"
-              class="w-full rounded-t-sm bg-glow-500/80"
-              :style="{ height: `${altura(dia.downloads)}%` }"
-            />
-            <div
-              v-if="dia.visitas > 0"
-              class="w-full rounded-t-sm bg-accent-500/80 transition-colors group-hover:bg-accent-400"
-              :style="{ height: `${altura(dia.visitas)}%` }"
-            />
-          </div>
-        </div>
+              v-for="(dia, i) in dados.serie"
+              :key="dia.dia"
+              class="group flex flex-1 flex-col"
+              :title="`${formatarDia(dia.dia)} — ${dia.visitas} visita(s), ${dia.downloads} download(s)`"
+            >
+              <div class="flex h-44 flex-col justify-end gap-[2px]">
+                <div
+                  v-if="dia.downloads > 0"
+                  class="w-full rounded-t-sm bg-glow-500/80"
+                  :style="{ height: `${altura(dia.downloads)}%` }"
+                />
+                <div
+                  v-if="dia.visitas > 0"
+                  class="w-full rounded-t-sm bg-accent-500/80 transition-colors group-hover:bg-accent-400"
+                  :style="{ height: `${altura(dia.visitas)}%` }"
+                />
+              </div>
 
-        <div class="mt-3 flex justify-between text-[0.7rem] text-fg-subtle">
-          <span>{{ formatarDia(dados.serie[0]?.dia) }}</span>
-          <span>{{ formatarDia(dados.serie[dados.serie.length - 1]?.dia) }}</span>
+              <span
+                class="mt-2 text-center text-[0.62rem] leading-none tabular-nums transition-colors group-hover:text-fg"
+                :class="temMovimento(dia) ? 'text-fg-muted' : 'text-fg-subtle/50'"
+              >
+                {{ diaDoMes(dia.dia) }}
+              </span>
+
+              <!-- O mês aparece só quando vira, e no primeiro dia da série,
+                   para dar referência sem repetir 30 vezes. -->
+              <span
+                class="mt-0.5 text-center text-[0.55rem] leading-none text-accent-400/70"
+                :class="marcaMes(dia.dia, i) ? '' : 'invisible'"
+              >
+                {{ marcaMes(dia.dia, i) || '.' }}
+              </span>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -135,6 +154,25 @@ const formatarDia = (iso) => {
   const [, mes, dia] = iso.split('-')
   return `${dia}/${mes}`
 }
+
+/** Só o número do dia — é o que cabe embaixo de uma barra estreita */
+const diaDoMes = (iso) => iso?.split('-')[2] ?? ''
+
+const MESES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
+
+/**
+ * Devolve a abreviação do mês apenas no primeiro dia da série e quando o mês
+ * muda. Repetir "ago" nas 30 colunas seria ruído; sem nenhuma marcação, um
+ * período que cruza a virada do mês fica ambíguo.
+ */
+const marcaMes = (iso, indice) => {
+  if (!iso) return ''
+  const dia = iso.split('-')[2]
+  if (indice === 0 || dia === '01') return MESES[Number(iso.split('-')[1]) - 1]
+  return ''
+}
+
+const temMovimento = (dia) => dia.visitas > 0 || dia.downloads > 0
 
 onMounted(async () => {
   try {
