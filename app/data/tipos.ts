@@ -51,6 +51,8 @@ export interface Curriculo {
   arquivo: string
   nomeArquivo: string
   page: string
+  /** Quando o PDF atual foi enviado — usado para detectar PDF desatualizado */
+  enviadoEm?: string
 }
 
 export interface Perfil {
@@ -68,6 +70,8 @@ export interface Perfil {
   formacao: EducationItem[]
   certificacoes: CertificationItem[]
   curriculo: Curriculo
+  /** Última gravação do perfil, seja qual for o campo */
+  atualizadoEm?: string
 }
 
 export interface MetricasDia {

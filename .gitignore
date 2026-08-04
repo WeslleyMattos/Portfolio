@@ -21,6 +21,10 @@ logs
 # Conteudo editado pelo painel admin e uploads (vive fora do build)
 dados
 
+# PDF gerado por `npm run curriculo` — vai para o site via upload no painel,
+# nao pelo repositorio
+/curriculo-weslley-mattos.pdf
+
 # Config do PM2 no servidor: carrega senha e segredo de sessao.
 # O modelo versionado e o ecosystem.config.exemplo.cjs
 ecosystem.config.cjs

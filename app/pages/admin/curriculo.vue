@@ -26,6 +26,24 @@
       <section class="cartao-admin">
         <h2 class="mb-4 font-bold text-fg">Arquivo PDF</h2>
 
+        <!-- O PDF é um arquivo separado: editar os campos abaixo muda a página
+             /curriculo na hora, mas não regera o PDF. Sem este aviso, dá para
+             publicar dados novos e continuar entregando o PDF antigo no
+             download sem perceber. -->
+        <p
+          v-if="pdfDesatualizado"
+          class="mb-4 flex items-start gap-2 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-300"
+          role="status"
+        >
+          <i class="bx bx-error mt-0.5 shrink-0 text-base" aria-hidden="true" />
+          <span>
+            O PDF está mais antigo que os dados do currículo. A página
+            <code>/curriculo</code> já mostra suas alterações, mas quem clicar em
+            "Baixar currículo" recebe a versão anterior. Rode
+            <code>npm run curriculo</code> e envie o arquivo abaixo.
+          </span>
+        </p>
+
         <label class="flex cursor-pointer items-center gap-2 text-sm text-fg-muted">
           <input v-model="perfil.curriculo.disponivel" type="checkbox" class="accent-accent-500" />
           Mostrar o botão de download no site
@@ -57,6 +75,10 @@
 
         <p class="mt-3 text-xs text-fg-subtle">
           Arquivo atual: <code>{{ perfil.curriculo.arquivo }}</code>
+          <span v-if="perfil.curriculo.enviadoEm">
+            · enviado em {{ formatarData(perfil.curriculo.enviadoEm) }}
+          </span>
+          <span v-else>· enviado antes do painel existir</span>
         </p>
         <p class="mt-1 text-xs text-fg-subtle">
           Gere o PDF na sua máquina com <code>npm run curriculo</code> e envie aqui. Cuidado:
@@ -350,7 +372,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 
 definePageMeta({ layout: 'admin', middleware: 'admin' })
 useSeoMeta({ title: 'Currículo', robots: 'noindex, nofollow' })
@@ -368,6 +390,28 @@ const gruposStats = [
   { chave: 'techStats', titulo: 'Técnicas' },
   { chave: 'softStats', titulo: 'Comportamentais' },
 ]
+
+const formatarData = (iso) =>
+  iso ? new Date(iso).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }) : ''
+
+/**
+ * O PDF ficou para trás dos dados?
+ *
+ * A folga de 10s existe porque enviar o PDF grava o perfil junto, e as duas
+ * datas saem praticamente iguais — sem ela, o aviso apareceria logo depois
+ * de um envio bem-sucedido.
+ */
+const pdfDesatualizado = computed(() => {
+  if (!perfil.value?.curriculo?.disponivel) return false
+  const atualizado = perfil.value.atualizadoEm
+  if (!atualizado) return false
+
+  const enviado = perfil.value.curriculo.enviadoEm
+  // Sem data de envio, o PDF vem de antes do painel: é antigo por definição
+  if (!enviado) return true
+
+  return new Date(atualizado).getTime() - new Date(enviado).getTime() > 10_000
+})
 
 onMounted(async () => {
   try {

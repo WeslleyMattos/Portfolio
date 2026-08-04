@@ -24,7 +24,23 @@ export async function gravarPerfil(perfil: Perfil): Promise<Perfil> {
   // Mescla sobre o padrão para que um payload parcial nunca derrube um campo
   // inteiro do site — o admin edita uma seção por vez.
   const atual = await lerPerfil()
-  const novo: Perfil = { ...atual, ...perfil, contato: { ...atual.contato, ...perfil.contato } }
+  const agora = new Date().toISOString()
+
+  const novo: Perfil = {
+    ...atual,
+    ...perfil,
+    contato: { ...atual.contato, ...perfil.contato },
+    curriculo: { ...atual.curriculo, ...perfil.curriculo },
+    atualizadoEm: agora,
+  }
+
+  // Carimba o envio quando o arquivo muda. Comparar esta data com a de
+  // atualizacao do perfil e o que permite ao painel avisar que o PDF ficou
+  // para tras — o PDF e um arquivo separado e nao acompanha as edicoes.
+  if (novo.curriculo.arquivo !== atual.curriculo.arquivo) {
+    novo.curriculo.enviadoEm = agora
+  }
+
   await gravarJson(ARQUIVO_PERFIL, novo)
   return novo
 }

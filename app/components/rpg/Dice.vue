@@ -11,16 +11,35 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { onBeforeUnmount, ref } from 'vue'
 
 const currentFace = ref(1)
 const isRolling = ref(false)
-const lastFace = ref(null)
+// Começa na face exibida, e não em null: senão a primeira rolagem pode cair
+// no proprio 1 que ja esta na tela e parecer que o clique nao fez nada.
+const lastFace = ref(1)
 let timeoutId = null
 
 const animationDuration = 3000
 
+/**
+ * Quem pede menos movimento no sistema recebe o resultado na hora.
+ *
+ * O CSS global zera a duração das animações sob prefers-reduced-motion, o
+ * que deixava o dado três segundos imóvel antes de trocar de número — na
+ * prática, indistinguível de estar quebrado. Melhor responder de imediato
+ * do que fingir uma animação que não vai acontecer.
+ */
+function prefereMenosMovimento() {
+    return (
+        typeof window !== 'undefined' &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    )
+}
+
 function randomFace() {
+    // Sorteia de novo se repetir: sem isso um resultado igual ao anterior
+    // parece que o clique não fez nada.
     let face = Math.floor(Math.random() * 20) + 1
     if (face === lastFace.value) {
         return randomFace()
@@ -29,20 +48,29 @@ function randomFace() {
     return face
 }
 
-function rollTo(face) {
-    clearTimeout(timeoutId)
-    currentFace.value = face
-}
-
 function roll() {
-    isRolling.value = true
     clearTimeout(timeoutId)
+
+    if (prefereMenosMovimento()) {
+        isRolling.value = false
+        currentFace.value = randomFace()
+        return
+    }
+
+    // Reinicia a animação a cada clique: sem tirar e repor a classe, um
+    // segundo clique durante a rolagem não recomeça o giro.
+    isRolling.value = false
+    requestAnimationFrame(() => {
+        isRolling.value = true
+    })
 
     timeoutId = setTimeout(() => {
         isRolling.value = false
-        rollTo(randomFace())
+        currentFace.value = randomFace()
     }, animationDuration)
 }
+
+onBeforeUnmount(() => clearTimeout(timeoutId))
 </script>
 
 <style scoped lang="scss">

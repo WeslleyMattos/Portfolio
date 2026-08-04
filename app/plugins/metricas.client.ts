@@ -21,8 +21,8 @@ export default defineNuxtPlugin(() => {
     })
   }
 
+  // Só o afterEach. Ele já dispara na navegação inicial da hidratação —
+  // eu antes chamava registrar() também no carregamento, e cada visita
+  // era contada duas vezes.
   router.afterEach((to) => registrar(to.path))
-
-  // O afterEach não dispara para o primeiro carregamento
-  registrar(router.currentRoute.value.path)
 })
