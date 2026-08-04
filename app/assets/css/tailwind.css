@@ -260,6 +260,27 @@
     opacity: 1 !important;
     transform: none !important;
   }
+
+  /*
+   * Exceção: o dado de 20 lados.
+   *
+   * A regra acima existe para movimento ambiente — coisas que se mexem
+   * sozinhas e podem incomodar quem tem sensibilidade vestibular. O dado é
+   * o oposto: só gira quando a pessoa clica nele, de propósito, e a rolagem
+   * É o retorno da ação. Sem a animação ele apenas troca de número, o que
+   * parece defeito.
+   *
+   * Especificidade maior que a do `*` acima, então vence mesmo com ambas
+   * marcadas como !important.
+   */
+  .die.rolling {
+    animation-duration: 3s !important;
+    animation-iteration-count: 1 !important;
+  }
+
+  .die {
+    transition-duration: 0.5s !important;
+  }
 }
 
 /* ============================================================

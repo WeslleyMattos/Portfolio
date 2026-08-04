@@ -22,21 +22,6 @@ let timeoutId = null
 
 const animationDuration = 3000
 
-/**
- * Quem pede menos movimento no sistema recebe o resultado na hora.
- *
- * O CSS global zera a duração das animações sob prefers-reduced-motion, o
- * que deixava o dado três segundos imóvel antes de trocar de número — na
- * prática, indistinguível de estar quebrado. Melhor responder de imediato
- * do que fingir uma animação que não vai acontecer.
- */
-function prefereMenosMovimento() {
-    return (
-        typeof window !== 'undefined' &&
-        window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    )
-}
-
 function randomFace() {
     // Sorteia de novo se repetir: sem isso um resultado igual ao anterior
     // parece que o clique não fez nada.
@@ -50,12 +35,6 @@ function randomFace() {
 
 function roll() {
     clearTimeout(timeoutId)
-
-    if (prefereMenosMovimento()) {
-        isRolling.value = false
-        currentFace.value = randomFace()
-        return
-    }
 
     // Reinicia a animação a cada clique: sem tirar e repor a classe, um
     // segundo clique durante a rolagem não recomeça o giro.
